@@ -77,7 +77,7 @@ export default function App() {
               >
                 <div className="w-6 h-6 rounded-none overflow-hidden border border-red-500">
                    <img 
-                     src="2.jpg" 
+                     src="/2.jpg" 
                      className="w-full h-full object-cover pixelated" 
                      onError={(e) => {
                        // Fallback in case of path issues on some hosting
@@ -106,10 +106,20 @@ export default function App() {
                 className="absolute inset-0 z-[100] bg-black flex flex-col items-center justify-center p-8 text-center"
               >
                 {/* 16:9 Cover Background */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div 
-                    className="w-full h-full aspect-video bg-contain bg-center bg-no-repeat shadow-2xl" 
-                    style={{ backgroundImage: "url('upload/cover.png')" }}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <img 
+                    src="/upload/cover.png" 
+                    alt="Cover"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-contain shadow-2xl opacity-80"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      console.error("Cover image failed to load, falling back to placeholder.");
+                      if (!target.src.includes('picsum.photos')) {
+                        // Fallback to a high-quality relevant placeholder
+                        target.src = "https://picsum.photos/seed/demon_lord_game_cover/1920/1080";
+                      }
+                    }}
                   />
                 </div>
 

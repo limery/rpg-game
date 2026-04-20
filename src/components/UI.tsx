@@ -76,10 +76,10 @@ export const PixelPortrait: React.FC<{
   };
   
   const portraits = {
-    HERO: expression === "STAREYE" ? "upload/stareyes.png" : "1.jpg",
-    DEMON: "2.jpg",
-    BARD: "3.jpg",
-    BARRY: "upload/barry.png"
+    HERO: expression === "STAREYE" ? "/upload/stareyes.png" : "/1.jpg",
+    DEMON: "/2.jpg",
+    BARD: "/3.jpg",
+    BARRY: "/upload/barry.png"
   };
 
   const colors = {
@@ -105,7 +105,7 @@ export const PixelPortrait: React.FC<{
     )}>
       <img
         src={portraits[type]}
-        alt={descriptions[type]}
+        alt={descriptions[type]} // portrait alt
         onError={(e) => {
           const target = e.target as HTMLImageElement;
           // Fallback: try stripping leading slash if it fails
@@ -129,28 +129,30 @@ export const PixelPortrait: React.FC<{
       />
       {type === "DEMON" && eyeClosed && (
         <img 
-          src="upload/eyeclosed.png" 
+          src="/upload/eyeclosed.png" 
           className="absolute inset-0 w-full h-full object-cover z-20 pixelated" 
           alt="Demon Closed Eyes"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             if (target.src.startsWith(window.location.origin)) {
                const pathOnly = target.src.replace(window.location.origin, '');
-               if (pathOnly.startsWith('/')) target.src = pathOnly.substring(1);
+               if (pathOnly.startsWith('/')) target.src = pathOnly;
+               else target.src = '/' + pathOnly;
             }
           }}
         />
       )}
       {type === "BARD" && (eyeClosed || expression === "CLOSED") && (
         <img 
-          src="upload/eyeclosed2.png" 
+          src="/upload/eyeclosed2.png" 
           className="absolute inset-0 w-full h-full object-cover z-20 pixelated" 
           alt="Ruby Closed Eyes"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             if (target.src.startsWith(window.location.origin)) {
                const pathOnly = target.src.replace(window.location.origin, '');
-               if (pathOnly.startsWith('/')) target.src = pathOnly.substring(1);
+               if (pathOnly.startsWith('/')) target.src = pathOnly;
+               else target.src = '/' + pathOnly;
             }
           }}
         />

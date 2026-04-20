@@ -21,7 +21,7 @@ export const EndingScreen: React.FC<EndingScreenProps> = ({ ending, state, onRes
         <div className="w-full md:w-1/2 aspect-[3/2] bg-slate-900 border-2 border-slate-800 shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden relative group">
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10" />
           <img 
-            src={`upload/cg_ending_${ending.id}.png`} 
+            src={`/upload/cg_ending_${ending.id}.png`} 
             alt={ending.title}
             className="w-full h-full object-cover transition-transform duration-[10000ms] group-hover:scale-110"
             onError={(e) => {
