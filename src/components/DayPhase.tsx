@@ -111,15 +111,15 @@ export const DayPhase: React.FC<DayPhaseProps> = ({ state, onEventComplete, onTr
 
   const getSceneImage = (regionId: string): string => {
     switch(regionId) {
-      case "starter_village": return "/upload/cg1.png";
-      case "country_forest": return "/upload/cg2.png";
-      case "misty_forest": return "/upload/cg3.png";
-      case "imperial_city": return "/upload/cg4.png";
-      case "ice_field": return "/upload/cg5.png";
-      case "dragon_bone_canyon": return "/upload/cg6.png";
-      case "desert": return "/upload/cg7.png";
-      case "volcano": return "/upload/cg8.png";
-      default: return "/upload/cg1.png";
+      case "starter_village": return "upload/cg1.png";
+      case "country_forest": return "upload/cg2.png";
+      case "misty_forest": return "upload/cg3.png";
+      case "imperial_city": return "upload/cg4.png";
+      case "ice_field": return "upload/cg5.png";
+      case "dragon_bone_canyon": return "upload/cg6.png";
+      case "desert": return "upload/cg7.png";
+      case "volcano": return "upload/cg8.png";
+      default: return "upload/cg1.png";
     }
   };
 

@@ -76,10 +76,10 @@ export const PixelPortrait: React.FC<{
   };
   
   const portraits = {
-    HERO: expression === "STAREYE" ? "/upload/stareyes.png" : "/1.jpg",
-    DEMON: "/2.jpg",
-    BARD: "/3.jpg",
-    BARRY: "/upload/Barry.png"
+    HERO: expression === "STAREYE" ? "upload/stareyes.png" : "1.jpg",
+    DEMON: "2.jpg",
+    BARD: "3.jpg",
+    BARRY: "upload/barry.png"
   };
 
   const colors = {
@@ -109,8 +109,11 @@ export const PixelPortrait: React.FC<{
         onError={(e) => {
           const target = e.target as HTMLImageElement;
           // Fallback: try stripping leading slash if it fails
-          if (target.src.startsWith(window.location.origin + '/')) {
-             target.src = target.src.replace(window.location.origin + '/', '');
+          if (target.src.startsWith(window.location.origin)) {
+             const pathOnly = target.src.replace(window.location.origin, '');
+             if (pathOnly.startsWith('/')) {
+               target.src = pathOnly.substring(1);
+             }
           }
           // If still failing, maybe it's just missing
           if (target.getAttribute('data-second-fail')) {
@@ -123,32 +126,31 @@ export const PixelPortrait: React.FC<{
           "w-full h-full object-cover pixelated transition-all duration-700 relative z-10",
           (eyeClosed || expression === "CLOSED") && type !== "HERO" && "opacity-0" 
         )}
-        referrerPolicy="no-referrer"
       />
       {type === "DEMON" && eyeClosed && (
         <img 
-          src="/upload/eyeclosed.png" 
+          src="upload/eyeclosed.png" 
           className="absolute inset-0 w-full h-full object-cover z-20 pixelated" 
           alt="Demon Closed Eyes"
-          referrerPolicy="no-referrer"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            if (target.src.startsWith(window.location.origin + '/')) {
-               target.src = target.src.replace(window.location.origin + '/', '');
+            if (target.src.startsWith(window.location.origin)) {
+               const pathOnly = target.src.replace(window.location.origin, '');
+               if (pathOnly.startsWith('/')) target.src = pathOnly.substring(1);
             }
           }}
         />
       )}
       {type === "BARD" && (eyeClosed || expression === "CLOSED") && (
         <img 
-          src="/upload/eyeclosed2.png" 
+          src="upload/eyeclosed2.png" 
           className="absolute inset-0 w-full h-full object-cover z-20 pixelated" 
           alt="Ruby Closed Eyes"
-          referrerPolicy="no-referrer"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            if (target.src.startsWith(window.location.origin + '/')) {
-               target.src = target.src.replace(window.location.origin + '/', '');
+            if (target.src.startsWith(window.location.origin)) {
+               const pathOnly = target.src.replace(window.location.origin, '');
+               if (pathOnly.startsWith('/')) target.src = pathOnly.substring(1);
             }
           }}
         />

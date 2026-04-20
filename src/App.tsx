@@ -77,9 +77,8 @@ export default function App() {
               >
                 <div className="w-6 h-6 rounded-none overflow-hidden border border-red-500">
                    <img 
-                     src="/2.jpg" 
+                     src="2.jpg" 
                      className="w-full h-full object-cover pixelated" 
-                     referrerPolicy="no-referrer" 
                      onError={(e) => {
                        // Fallback in case of path issues on some hosting
                        const target = e.target as HTMLImageElement;
@@ -110,7 +109,7 @@ export default function App() {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div 
                     className="w-full h-full aspect-video bg-contain bg-center bg-no-repeat shadow-2xl" 
-                    style={{ backgroundImage: "url('/upload/cover.png')" }}
+                    style={{ backgroundImage: "url('upload/cover.png')" }}
                   />
                 </div>
 

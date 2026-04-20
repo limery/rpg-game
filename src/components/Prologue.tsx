@@ -67,7 +67,7 @@ export const Prologue: React.FC<PrologueProps> = ({ onComplete, updateStats }) =
                animate={{ opacity: 0.3 }}
                exit={{ opacity: 0 }}
                className="absolute inset-0 bg-cover bg-center" 
-               style={{ backgroundImage: `url("${(current.background || "/upload/demon_city.jpg")}")` }}
+               style={{ backgroundImage: `url("${(current.background || "upload/demon_city.jpg").replace(/^\//, '')}")` }}
              />
            )}
         </AnimatePresence>
