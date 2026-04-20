@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Serif+SC:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-pixel: "ZCOOL KuaiLe", "Courier New", monospace;
+  --font-serif: "Noto Serif SC", serif;
+  
+  --color-game-bg: #0a0502;
+  --color-game-red: #991b1b;
+  --color-game-gold: #fbbf24;
+  --color-game-green: #166534;
+}
+
+@layer base {
+  body {
+    @apply bg-game-bg text-white overflow-hidden;
+    font-family: var(--font-serif);
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@layer components {
+  .crt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%,
+      rgba(0, 0, 0, 0.1) 50%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.03),
+      rgba(0, 255, 0, 0.01),
+      rgba(0, 0, 255, 0.03)
+    );
+    background-size: 100% 3px, 3px 100%;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .pixel-border {
+    @apply border-4 border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)];
+    image-rendering: pixelated;
+  }
+
+  .pixel-text-shadow {
+    text-shadow: 2px 2px 0px #000;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(153, 27, 27, 0.5);
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(153, 27, 27, 0.8);
+  }
+}
+
+.pixelated {
+  image-rendering: pixelated;
+}
