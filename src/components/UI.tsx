@@ -107,7 +107,17 @@ export const PixelPortrait: React.FC<{
         src={portraits[type]}
         alt={descriptions[type]}
         onError={(e) => {
-          (e.target as HTMLImageElement).style.display = 'none';
+          const target = e.target as HTMLImageElement;
+          // Fallback: try stripping leading slash if it fails
+          if (target.src.startsWith(window.location.origin + '/')) {
+             target.src = target.src.replace(window.location.origin + '/', '');
+          }
+          // If still failing, maybe it's just missing
+          if (target.getAttribute('data-second-fail')) {
+            target.style.display = 'none';
+          } else {
+            target.setAttribute('data-second-fail', 'true');
+          }
         }}
         className={cn(
           "w-full h-full object-cover pixelated transition-all duration-700 relative z-10",
@@ -121,6 +131,12 @@ export const PixelPortrait: React.FC<{
           className="absolute inset-0 w-full h-full object-cover z-20 pixelated" 
           alt="Demon Closed Eyes"
           referrerPolicy="no-referrer"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src.startsWith(window.location.origin + '/')) {
+               target.src = target.src.replace(window.location.origin + '/', '');
+            }
+          }}
         />
       )}
       {type === "BARD" && (eyeClosed || expression === "CLOSED") && (
@@ -129,6 +145,12 @@ export const PixelPortrait: React.FC<{
           className="absolute inset-0 w-full h-full object-cover z-20 pixelated" 
           alt="Ruby Closed Eyes"
           referrerPolicy="no-referrer"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src.startsWith(window.location.origin + '/')) {
+               target.src = target.src.replace(window.location.origin + '/', '');
+            }
+          }}
         />
       )}
       {/* SVG Placeholder fallback behind the image */}

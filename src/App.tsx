@@ -80,6 +80,13 @@ export default function App() {
                      src="/2.jpg" 
                      className="w-full h-full object-cover pixelated" 
                      referrerPolicy="no-referrer" 
+                     onError={(e) => {
+                       // Fallback in case of path issues on some hosting
+                       const target = e.target as HTMLImageElement;
+                       if (target.src.startsWith(window.location.origin)) {
+                         target.src = target.src.replace(window.location.origin, '');
+                       }
+                     }}
                    />
                 </div>
                 <span className="text-white/70 font-mono text-[10px] uppercase font-bold">Profile</span>
@@ -101,7 +108,10 @@ export default function App() {
               >
                 {/* 16:9 Cover Background */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-full h-full aspect-video bg-[url('/upload/cover.png')] bg-contain bg-center bg-no-repeat shadow-2xl" />
+                  <div 
+                    className="w-full h-full aspect-video bg-contain bg-center bg-no-repeat shadow-2xl" 
+                    style={{ backgroundImage: "url('/upload/cover.png')" }}
+                  />
                 </div>
 
                 <div className="relative z-10 translate-y-28">

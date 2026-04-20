@@ -1272,7 +1272,7 @@ export const PROLOGUE_DIALOGUE = [
   {
     speaker: "魔王",
     text: "去当一个流浪的【吟游诗人】。我要亲手把那个废柴，调教成最强的屠魔英雄！",
-    background: "/upload/demon city.jpg",
+    background: "/upload/demon_city.jpg",
   },
   {
     speaker: "勇者",
