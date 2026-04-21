@@ -36,7 +36,7 @@ export function useGameState() {
         if (typeof newHero[key] === 'number') {
            // stats like Level might go outside 100, but health/stamina/mana are usually 100 max
            const maxVal = (key === 'health' || key === 'stamina' || key === 'mana') ? 100 : Infinity;
-           newHero[key] = Math.max(0, Math.min(maxVal, newHero[key] as number)) as any;
+           newHero[key] = Math.ceil(Math.max(0, Math.min(maxVal, newHero[key] as number))) as any;
         }
       });
 
@@ -75,7 +75,7 @@ export function useGameState() {
         (Object.keys(newHero) as Array<keyof HeroStats>).forEach(key => {
           if (typeof newHero[key] === 'number') {
              const maxVal = (key === 'health' || key === 'stamina' || key === 'mana') ? 100 : Infinity;
-             newHero[key] = Math.max(0, Math.min(maxVal, newHero[key] as number)) as any;
+             newHero[key] = Math.ceil(Math.max(0, Math.min(maxVal, newHero[key] as number))) as any;
           }
         });
 

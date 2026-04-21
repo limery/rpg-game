@@ -36,16 +36,22 @@ export const DAY_EVENTS: DayEvent[] = [
     choices: [
       {
         text: "“抓住史莱姆丢进锅里煮汤”",
-        resultText: "史莱姆汤的味道出奇地鲜美，勇者打了个饱嗝，感觉浑身充满了力量（和一点点负罪感）。",
+        resultText: "史莱姆汤的味道出奇地鲜美。虽然抓捕时被溅了一身粘液，但勇者感觉力量涌上来了！",
+        failText: "史莱姆太滑了！它不仅逃跑了，还在勇者脸上蹦了一下。勇者被撞得晕乎乎的，精神受到了打击。",
+        failChance: 0.1,
         effect: (state) => ({ 
-          hero: { ...state.hero, health: state.hero.health + 5, stamina: state.hero.stamina - 5 },
+          hero: { ...state.hero, health: Math.max(0, state.hero.health - 1), stamina: Math.min(100, state.hero.stamina + 5) },
           flags: { ...state.flags, ate_slime: true }
         }),
+        failEffect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 2), suspicion: state.hero.suspicion + 2 } })
       },
       {
         text: "“鼓励她用木剑戳它”",
-        resultText: "在你的调教下，勇者发出了软绵绵的呐喊并成功刺穿了史莱姆。虽然它很快就重组了，但勇者的眼里闪烁着成就感。",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 10, affection: state.hero.affection + 5 } }),
+        resultText: "在你的调教下，勇者发出了软绵绵的呐喊并成功刺穿了史莱姆。虽然它很快就重组了，但她对战斗的领悟加深了。",
+        failText: "勇者还没戳到，史莱姆就先发动了冲击！她被撞倒在草地上，疼得眼泪汪汪。",
+        failChance: 0.2,
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 1), stamina: Math.min(100, state.hero.stamina + 8), affection: state.hero.affection + 5 } }),
+        failEffect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 4), affection: Math.max(0, state.hero.affection - 2) } })
       },
     ],
   },
@@ -57,13 +63,13 @@ export const DAY_EVENTS: DayEvent[] = [
     choices: [
       {
         text: "“带她去爬树找猫”",
-        resultText: "猫没找着，你们倒是在树梢看了一场绝美的日落。虽然下树的时候勇者灰头土脸的，但她笑得很开心。",
-        effect: (state) => ({ hero: { ...state.hero, stamina: state.hero.stamina - 15, affection: state.hero.affection + 2 }, flags: { ...state.flags, found_cat: true } }),
+        resultText: "猫没找着，你们倒是在树梢看了一场绝美的日落。勇者得到了锻炼，心情也变好了。",
+        effect: (state) => ({ hero: { ...state.hero, stamina: Math.min(100, state.hero.stamina + 5), affection: state.hero.affection + 5 }, flags: { ...state.flags, found_cat: true } }),
       },
       {
         text: "“告诉她猫可能去魔王阵营了”",
-        resultText: "勇者认真考虑了这种可能性，甚至开始研究如何策反那只猫。她的眼神变得深邃了，虽然方向似乎不太对。",
-        effect: (state) => ({ hero: { ...state.hero, suspicion: state.hero.suspicion + 5, mana: state.hero.mana + 5 } }),
+        resultText: "勇者认真考虑了这种可能性。为了解析这种魔力波动，她尝试运用了平时你教的秘法，魔力有所提升。",
+        effect: (state) => ({ hero: { ...state.hero, suspicion: state.hero.suspicion + 2, mana: Math.min(100, state.hero.mana + 5) } }),
       },
     ],
   },
@@ -75,7 +81,14 @@ export const DAY_EVENTS: DayEvent[] = [
     choices: [
       {
         text: "“分一半给勇者”",
-        effect: (state) => ({ hero: { ...state.hero, health: 100, affection: state.hero.affection + 10 } }),
+        effect: (state) => ({ 
+          hero: { 
+            ...state.hero, 
+            health: Math.min(100, state.hero.health + 15), 
+            stamina: Math.min(100, state.hero.stamina + 5),
+            affection: state.hero.affection + 10 
+          } 
+        }),
       },
     ],
   },
@@ -87,11 +100,16 @@ export const DAY_EVENTS: DayEvent[] = [
     choices: [
       {
         text: "“手把手教她标准的劈砍动作”",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 15, affection: state.hero.affection + 8, stamina: state.hero.stamina - 10 } }),
+        resultText: "在你的纠正下，勇者的动作规范了许多。虽腰酸背痛，但对武器的掌控力变强了。",
+        failText: "由于姿势用力过猛，勇者竟然把自己的腰闪了！这下不仅练习没法继续，还得躺平休息。",
+        failChance: 0.15,
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 3), stamina: Math.min(100, state.hero.stamina + 12), affection: state.hero.affection + 5 } }),
+        failEffect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 10), stamina: Math.max(0, state.hero.stamina - 3) } })
       },
       {
         text: "“坐在旁边若无其事地喝红茶”",
-        effect: (state) => ({ hero: { ...state.hero, mana: state.hero.mana + 5, suspicion: state.hero.suspicion + 2 } }),
+        resultText: "勇者在你的静默中感到了一种神秘的玄奥。她试图通过冥想来沟通元素的呼吸，魔力意外提升了。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 4), suspicion: state.hero.suspicion + 1 } }),
       },
     ],
   },
@@ -103,11 +121,32 @@ export const DAY_EVENTS: DayEvent[] = [
     choices: [
       {
         text: "“大喊一声‘有毒！’并拍掉她的手”",
-        effect: (state) => ({ hero: { ...state.hero, mana: state.hero.mana + 5, affection: state.hero.affection + 5 } }),
+        resultText: "你成功阻止了她，顺便趁机讲了讲野外生存知识。勇者的魔力感知似乎敏锐了一点。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 5), affection: state.hero.affection + 5 } }),
       },
       {
         text: "“看着她吃下去，然后在她晕倒前背她走”",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health - 20, affection: state.hero.affection + 20 } }),
+        resultText: "勇者在幻觉中看到了很多五彩的小人，醒来后虽然虚弱，但对你的信任度爆表了。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 12), affection: state.hero.affection + 25 } }),
+      },
+    ],
+  },
+  {
+    id: "s_ice_spirit_mischief",
+    region: "ice_field",
+    minLevel: 45,
+    repeatable: true,
+    text: "一个半透明的冰精灵突然出现，它嘻嘻笑着向勇者的后颈丢了一个冰球！",
+    choices: [
+      {
+        text: "“帮她把冰块取出来”",
+        resultText: "你温柔地帮她处理了恶作剧，勇者脸红了，虽然被冻了一下但心里暖暖的。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 3), affection: state.hero.affection + 10 } }),
+      },
+      {
+        text: "“嘲笑她刚才滑稽的反应”",
+        resultText: "冰精灵见你哈哈大笑，吐了吐舌头消失了。勇者的力量被寒气短暂压制了，甚至有些意志消沉。",
+        effect: (state) => ({ hero: { ...state.hero, stamina: Math.max(0, state.hero.stamina - 10), suspicion: state.hero.suspicion + 5 } }),
       },
     ],
   },
@@ -119,11 +158,48 @@ export const DAY_EVENTS: DayEvent[] = [
     choices: [
       {
         text: "“抱着她用单手解决骷髅”",
-        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 25, suspicion: state.hero.suspicion + 10 } }),
+        resultText: "你的强大让她无比安心，甚至开始觉得‘露比姐姐’简直无所不能。",
+        failText: "你单手挥剑时脚下打滑，两人差点一起摔进骨堆。场面一度非常尴尬。",
+        failChance: 0.1,
+        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 30, suspicion: state.hero.suspicion + 5 } }),
+        failEffect: (state) => ({ hero: { ...state.hero, affection: Math.max(0, state.hero.affection - 5), suspicion: state.hero.suspicion + 15 } })
       },
       {
         text: "“把她扔向骷髅并喊‘去吧我的王牌！’”",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 25, stamina: state.hero.stamina - 40 } }),
+        resultText: "在生死的边缘，勇者爆发出了惊人的潜力，一剑劈碎了骷髅。虽然受了点伤，但她变强了！",
+        failText: "勇者被扔过去时吓得闭上了眼，没砍中骷髅反被骨爪挠了一下。她哭着跑了回来。",
+        failChance: 0.25,
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 10), stamina: Math.min(100, state.hero.stamina + 20) } }),
+        failEffect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 20), affection: Math.max(0, state.hero.affection - 5) } })
+      },
+    ],
+  },
+  {
+    id: "c_evil_spirit_whisper",
+    region: "dragon_bone_canyon",
+    minLevel: 75,
+    repeatable: true,
+    text: "虚空中传来了峡谷恶灵的低语，它们在试图侵蚀勇者的精神。",
+    choices: [
+      {
+        text: "“用魔力构建精神屏障”",
+        resultText: "你的保护隔绝了污秽。在对抗低语的过程中，勇者的抗性得到了锻炼。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 15), affection: state.hero.affection + 5 } }),
+      },
+      {
+        text: "“让她自己学会用意志力对抗”",
+        resultText: (state) => {
+          const totalPower = state.hero.health + state.hero.stamina + state.hero.mana;
+          return totalPower >= 200 
+            ? "面对邪恶的低语，勇者的眼神异常坚定。那股坚韧的意志让恶灵也为之退缩，由于精神高度集中，她的魔力感应变得更强了。"
+            : "勇者的精神遭到了冲击，那些恶毒的咒语消耗了她的法力储备。她看起来非常虚弱，眼神中透着疲惫。";
+        },
+        effect: (state) => {
+          const totalPower = state.hero.health + state.hero.stamina + state.hero.mana;
+          return totalPower >= 200
+            ? { hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 10) } }
+            : { hero: { ...state.hero, mana: Math.max(0, state.hero.mana - 12), health: Math.max(0, state.hero.health - 3) } };
+        },
       },
     ],
   },
@@ -135,11 +211,13 @@ export const DAY_EVENTS: DayEvent[] = [
     choices: [
       {
         text: "“为了健康着想，一起进去暖暖身子”",
-        effect: (state) => ({ hero: { ...state.hero, health: 100, stamina: 100, affection: state.hero.affection + 30 } }),
+        resultText: "泉水洗刷了疲惫。在这氤氲的水汽中，你们的关系似乎也拉近了许多。",
+        effect: (state) => ({ hero: { ...state.hero, health: 100, stamina: Math.min(100, state.hero.stamina + 30), affection: state.hero.affection + 35 } }),
       },
       {
         text: "“拒绝并在旁边生一堆火”",
-        effect: (state) => ({ hero: { ...state.hero, stamina: state.hero.stamina + 20, affection: state.hero.affection + 5 } }),
+        resultText: "火光映照着勇者的侧脸。虽然没有泡温泉，但也让体力得到了不错的补充。",
+        effect: (state) => ({ hero: { ...state.hero, stamina: Math.min(100, state.hero.stamina + 20), affection: state.hero.affection + 5 } }),
       },
     ],
   },
@@ -152,14 +230,14 @@ export const DAY_EVENTS: DayEvent[] = [
     choices: [
       {
         text: "“接受王室洗礼与全方位特训”",
-        resultText: "圣水洗刷了疲惫，高强度的特训虽然让勇者哀号连连，但那暴涨的等级证明了一切辛劳都是值得的。",
+        resultText: "圣水洗刷了疲惫，高强度的特训虽然让勇者哀号连连，但那暴涨的属性证明了一切辛劳都是值得的。体力、魔力与健康得到了显著回复，且连升5级！",
         effect: (state) => ({
           hero: {
             ...state.hero,
-            health: Math.round(state.hero.health + (state.maxStats.health - state.hero.health) * 0.5),
-            stamina: Math.round(state.hero.stamina + (state.maxStats.stamina - state.hero.stamina) * 0.5),
-            mana: Math.round(state.hero.mana + (state.maxStats.mana - state.hero.mana) * 0.5),
-            level: state.hero.level + 4, // Event gives +4, day end gives +1, total +5
+            health: Math.min(100, Math.round(state.hero.health + (100 - state.hero.health) * 0.5)),
+            stamina: Math.min(100, Math.round(state.hero.stamina + (100 - state.hero.stamina) * 0.5)),
+            mana: Math.min(100, Math.round(state.hero.mana + (100 - state.hero.mana) * 0.5)),
+            level: state.hero.level + 4, // Event +4, Day End +1 = Total +5
           },
         }),
       },
@@ -207,7 +285,7 @@ export const DAY_EVENTS: DayEvent[] = [
       {
         text: "“亲自示范一下简单的突刺”",
         resultText: "你随意拨弄了一下木枝，那种凌厉的气息让勇者崇拜不已。她模仿得有模有样，力量感上升了！",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 1, stamina: state.hero.stamina - 5 } }),
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 2), stamina: Math.min(100, state.hero.stamina + 5) } }),
       },
       {
         text: "“鼓励她继续努力”",
@@ -225,11 +303,11 @@ export const DAY_EVENTS: DayEvent[] = [
       {
         text: "“纠正她的用力方式”",
         resultText: "割麦子也是体力活。勇者虽然累得够呛，但对力量的运用似乎更得心应手了。",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 3, stamina: state.hero.stamina - 20 } }),
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 5), stamina: Math.min(100, state.hero.stamina + 10) } }),
       },
       {
         text: "“在旁边偷吃刚烤好的红薯”",
-        resultText: "你在树荫下大快朵颐。勇者闻着味儿跑过来，满脸怨念地分享了你的一半——这也是某种程度的同步？",
+        resultText: "你在树荫下大快朵颐。勇者闻着味儿跑过来，满脸怨念地分享了你的一半。",
         effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 5 } }),
       },
     ],
@@ -262,7 +340,7 @@ export const DAY_EVENTS: DayEvent[] = [
       {
         text: "“去吧！你可以的！”",
         resultText: "在一阵尖叫和混乱中，勇者成功驱逐了哥布林。商人送了一枚神秘戒指作为谢礼。",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 5, stamina: state.hero.stamina - 15 }, inventory: [...state.inventory, "merchant_ring"] }),
+        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 5, stamina: state.hero.stamina - 8 }, inventory: [...state.inventory, "merchant_ring"] }),
       },
       {
         text: "“暗中施放恐惧术吓跑哥布林”",
@@ -321,8 +399,11 @@ export const DAY_EVENTS: DayEvent[] = [
       },
       {
         text: "“买下来让勇者试喝”",
-        resultText: "药剂是假醋。勇者酸得满地找牙。老板趁机溜了，勇者发誓要学会鉴定法术。",
-        effect: (state) => ({ hero: { ...state.hero, mana: state.hero.mana + 8, stamina: state.hero.stamina - 5 } }),
+        resultText: "药剂居然是真的。勇者喝下后，视野变得无比清晰，甚至隐约感觉到你周身缭绕的魔气。",
+        failText: "药剂是假醋。勇者酸得满地找牙。老板趁机溜了，勇者发誓要学会鉴定法术。",
+        failChance: 0.3,
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 15), suspicion: state.hero.suspicion + 10 } }),
+        failEffect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 2), health: Math.max(0, state.hero.health - 5) } })
       },
     ],
   },
@@ -355,12 +436,15 @@ export const DAY_EVENTS: DayEvent[] = [
       {
         text: "“弹指间升起一团永恒之火”",
         resultText: "橙红色的火光中，勇者看向你的眼神里不仅仅是崇拜。即使是魔王，此刻也感觉到了一丝暖意。",
-        effect: (state) => ({ hero: { ...state.hero, mana: state.hero.mana + 5, affection: state.hero.affection + 15 } }),
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 5), affection: state.hero.affection + 15 } }),
       },
       {
         text: "“教她如何用斗气御寒”",
         resultText: "在那艰苦的教导下，她终于掌握了一点呼吸法。虽然浑身是汗但在雪地里也不再发抖了。",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 8, stamina: state.hero.stamina + 20 } }),
+        failText: "动作没到位，勇者不仅没变暖，反而因为出汗后吹冷风感冒了。",
+        failChance: 0.2,
+        effect: (state) => ({ hero: { ...state.hero, health: Math.min(100, state.hero.health + 5), stamina: Math.min(100, state.hero.stamina + 20) } }),
+        failEffect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 15) } })
       },
     ],
   },
@@ -374,12 +458,12 @@ export const DAY_EVENTS: DayEvent[] = [
       {
         text: "“喂她喝下一瓶神圣甘露（其实是冰镇可乐）”",
         resultText: "气泡冲上鼻尖的那一刻，勇者彻底复活了。她觉得这是你从神界求来的秘宝。",
-        effect: (state) => ({ hero: { ...state.hero, health: 100, affection: state.hero.affection + 10 } }),
+        effect: (state) => ({ hero: { ...state.hero, health: Math.min(100, state.hero.health + 30), affection: state.hero.affection + 10 } }),
       },
       {
         text: "“让她继续跟仙人掌聊天”",
         resultText: "神奇的是，仙人掌竟然倒向了水源的方向……勇者的【运气】增加了一点。",
-        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 5, mana: state.hero.mana + 2 } }),
+        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 5, mana: Math.min(100, state.hero.mana + 5) } }),
       },
     ],
   },
@@ -425,15 +509,27 @@ export const DAY_EVENTS: DayEvent[] = [
     id: "mf_1_wicked_witch",
     region: "misty_forest",
     minLevel: 30,
-    text: "迷雾森林深处，一位自称‘导师同事’的女巫正邀请勇者去她家喝茶。",
+    repeatable: true,
+    text: "迷雾森林深处，一位干瘪的邪恶女巫正躲在树后观察你们。她突然现身投掷了一枚诡异的魔药！",
     choices: [
       {
-        text: "“那是你的幻觉，快走”",
-        effect: (state) => ({ hero: { ...state.hero, mana: state.hero.mana - 2 } }),
+        text: "“挺身而出挡住魔药”",
+        resultText: "魔药在你身上无效，但女巫反手给勇者补了一个衰弱诅咒。勇者的精神受到了冲击。",
+        effect: (state) => {
+          const isStamina = Math.random() > 0.5;
+          return {
+            hero: {
+              ...state.hero,
+              stamina: isStamina ? Math.max(0, state.hero.stamina - 15) : state.hero.stamina,
+              mana: !isStamina ? Math.max(0, state.hero.mana - 15) : state.hero.mana
+            }
+          };
+        },
       },
       {
-        text: "“去喝茶（顺便偷她的魔法卷轴）”",
-        effect: (state) => ({ hero: { ...state.hero, mana: 100, suspicion: state.hero.suspicion + 15, inventory: [...state.inventory, "witch_scroll"] } }),
+        text: "“拉着勇者快速逃跑”",
+        resultText: "你们虽然逃掉了，但在慌乱的奔跑中消耗了大量体力。",
+        effect: (state) => ({ hero: { ...state.hero, stamina: Math.max(0, state.hero.stamina - 10) } }),
       },
     ],
   },
@@ -483,7 +579,7 @@ export const DAY_EVENTS: DayEvent[] = [
       {
         text: "“这是迷魂阵，坐下冥想找到生机”",
         resultText: "在你的引导下，勇者第一次感受到了自然界的脉动。虽然耗费了一整天，但她的心境提升了。",
-        effect: (state) => ({ hero: { ...state.hero, mana: state.hero.mana + 23, stamina: state.hero.stamina - 20 } }),
+        effect: (state) => ({ hero: { ...state.hero, mana: state.hero.mana + 23, stamina: state.hero.stamina - 10 } }),
       },
     ],
   },
@@ -530,7 +626,7 @@ export const DAY_EVENTS: DayEvent[] = [
       {
         text: "“张开守护屏障屏蔽风沙”",
         resultText: "风沙在屏障外狂暴地肆虐，勇者在屏障内安稳地睡着了。她开始觉得你无所不能。",
-        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 10, mana: state.hero.mana - 20 } }),
+        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 10, mana: state.hero.mana - 10 } }),
       },
       {
         text: "“教她如何在风沙中锁定敌人的位置”",
@@ -672,7 +768,7 @@ export const DAY_EVENTS: DayEvent[] = [
       {
         text: "“只有通过痛苦才能获得回报”",
         resultText: "她强忍着被刺痛的痛苦采摘了药草。虽然受了点轻伤，但意志变得更加坚强了。",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health - 5, stamina: state.hero.stamina + 15 } }),
+        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health - 3, stamina: state.hero.stamina + 15 } }),
       },
     ],
   },
@@ -698,7 +794,7 @@ export const DAY_EVENTS: DayEvent[] = [
     choices: [
       {
         text: "“这是一场名为‘生死’的试炼”",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health - 10 } }),
+        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health - 6 } }),
       },
       {
         text: "“直接用上位魔力将其再次瓦解”",
@@ -714,11 +810,11 @@ export const DAY_EVENTS: DayEvent[] = [
     choices: [
       {
         text: "“负重特训是变强的捷径”",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 20, stamina: state.hero.stamina - 60 } }),
+        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 20, stamina: state.hero.stamina - 30 } }),
       },
       {
         text: "“帮她施加轻灵之翼”",
-        effect: (state) => ({ hero: { ...state.hero, mana: state.hero.mana - 30, affection: state.hero.affection + 15 } }),
+        effect: (state) => ({ hero: { ...state.hero, mana: state.hero.mana - 10, affection: state.hero.affection + 15 } }),
       },
     ],
   },
@@ -730,7 +826,7 @@ export const DAY_EVENTS: DayEvent[] = [
     choices: [
       {
         text: "“屠龙吧，虽然那是我的旧识”",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health - 10 }, demonKing: { ...state.demonKing, military: state.demonKing.military - 5 } }),
+        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health - 5 }, demonKing: { ...state.demonKing, military: state.demonKing.military - 5 } }),
       },
       {
         text: "“展现出凌驾于巨龙之上的恐怖气息”",
@@ -768,7 +864,7 @@ export const DAY_EVENTS: DayEvent[] = [
       {
         text: "“利用残骸加固营地，防止二次风暴”",
         resultText: "你展现出的生存经验让勇者佩服不已。虽然体力消耗巨大，但你们的安全感得到了极大增强。",
-        effect: (state) => ({ hero: { ...state.hero, stamina: state.hero.stamina - 20, mana: state.hero.mana + 10 } }),
+        effect: (state) => ({ hero: { ...state.hero, stamina: state.hero.stamina - 10, mana: state.hero.mana + 10 } }),
       },
     ],
   },
@@ -798,7 +894,7 @@ export const DAY_EVENTS: DayEvent[] = [
       {
         text: "“在旁边大喊鼓励她发动冲锋”",
         resultText: "在你振聋发聩的助威下，勇者发出了撕心裂肺的战吼冲向野猪群。那一刻，她的木剑仿佛带上了残影，野猪们被撞得满天乱飞。事后她揉着发红的手腕，眼里跳动着从未有过的战士火光。",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 6, stamina: state.hero.stamina - 20 } }),
+        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 6, stamina: state.hero.stamina - 10 } }),
       },
     ],
   },
@@ -981,6 +1077,111 @@ export const DAY_EVENTS: DayEvent[] = [
     ],
   },
   {
+    id: "v_5_blacksmith",
+    region: "starter_village",
+    minLevel: 3,
+    text: "村里的铁匠大叔正在打铁，火星四溅。勇者看得入神，铁匠大叔笑着问她要不要试试拉风箱。",
+    choices: [
+      {
+        text: "“这是一个锻炼臂力的好机会”",
+        resultText: "勇者卖力地拉着风箱，虽然弄得满头大汗且灰头土脸，但她的力量（Stamina）得到了实打实的提升。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 2), stamina: Math.min(100, state.hero.stamina + 15) } }),
+      },
+      {
+        text: "“在旁边点评铁匠的敲击节奏”",
+        resultText: "铁匠认为你很有见地。勇者听着你们的交谈，对武器的理解加深了。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 5), affection: state.hero.affection + 2 } }),
+      },
+    ],
+  },
+  {
+    id: "v_6_field_scarecrow",
+    region: "starter_village",
+    minLevel: 2,
+    text: "田野里立着几个稻草人。勇者突然觉得其中一个稻草人的眼神很邪恶，决定给它来一记重击。",
+    choices: [
+      {
+        text: "“发动你的最强一击吧！”",
+        resultText: "“哈！”木剑贯穿了稻草人。虽然稻草溅了一身，但勇者由于成功宣泄了破坏欲而感到很有成就感。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 2), stamina: Math.min(100, state.hero.stamina + 10) } }),
+      },
+    ],
+  },
+  {
+    id: "v_7_well_whisper",
+    region: "starter_village",
+    minLevel: 4,
+    text: "村中央的古井边传来了回声。勇者对着井口大喊：‘我是未来的大英雄！’井底传回了同样的叫声。",
+    choices: [
+      {
+        text: "“对着井口练习发声（这是领袖的气质）”",
+        resultText: "勇者喊了一下午，嗓子都快哑了。虽然听起来很傻，但她的意志力提升了。",
+        effect: (state) => ({ hero: { ...state.hero, stamina: Math.min(100, state.hero.stamina + 5), mana: Math.min(100, state.hero.mana + 2) } }),
+      },
+    ],
+  },
+  {
+    id: "v_8_chicken_chase",
+    region: "starter_village",
+    minLevel: 1,
+    repeatable: true,
+    text: "一群农家鸡不知为何在大街上横冲直撞。勇者觉得这简直是某种阵法，试图通过走位避开它们。",
+    choices: [
+      {
+        text: "“练习你的灵活动作！”",
+        resultText: "鸡飞狗跳中，勇者的身法变得轻盈了一点。虽然最后被大公鸡啄了一下，但经验值到手了。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 1), stamina: Math.min(100, state.hero.stamina + 3) } }),
+      },
+    ],
+  },
+  {
+    id: "v_9_village_festival",
+    region: "starter_village",
+    minLevel: 8,
+    text: "绿叶村正在举办丰收前的小祭典。空气中弥漫着烤香肠和麦芽酒的味道。",
+    choices: [
+      {
+        text: "“教她一跳传统的祭典舞蹈”",
+        resultText: "在欢快的鼓点中，你和勇者围着火堆起舞。虽然她踩了你三下脚，但你们的笑容从未如此灿烂。",
+        effect: (state) => ({ hero: { ...state.hero, stamina: Math.min(100, state.hero.stamina + 10), affection: state.hero.affection + 20 } }),
+      },
+      {
+        text: "“安静地坐在角落观察人群”",
+        resultText: "你教她如何观察他人的弱点和呼吸。勇者的直觉变得敏锐了。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 12), suspicion: state.hero.suspicion + 5 } }),
+      },
+    ],
+  },
+  {
+    id: "v_10_herb_garden",
+    region: "starter_village",
+    minLevel: 6,
+    text: "村医的花园里种着一些稀有的止血草。村医答应只要勇者帮忙除草，就教她一些药理知识。",
+    choices: [
+      {
+        text: "“认真除草并学习药草辨识”",
+        resultText: "勇者学会了如何分辨草药，还顺便带走了一些疗伤药粉。这对未来的冒险大有好处。",
+        effect: (state) => ({ 
+          hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 5), health: Math.min(100, state.hero.health + 10) },
+          flags: { ...state.flags, knows_herbs: true }
+        }),
+      },
+    ],
+  },
+  {
+    id: "v_11_old_knight_tomb",
+    region: "starter_village",
+    minLevel: 10,
+    text: "在村外的墓地里，有一座被遗忘的前代骑士墓碑。勇者在这里感觉到了一股庄严的气息。",
+    choices: [
+      {
+        text: "“在墓前宣誓你的志向”",
+        resultText: "一道微弱的圣光从天而降。前代骑士残存的意志认可了少女，她的等级（Level）因此获得了突破。",
+        effect: (state) => ({ hero: { ...state.hero, level: state.hero.level + 2, mana: Math.min(100, state.hero.mana + 10) } }),
+      },
+    ],
+  },
+  {
     id: "ic_repeatable_explore",
     region: "imperial_city",
     minLevel: 1,
@@ -995,6 +1196,106 @@ export const DAY_EVENTS: DayEvent[] = [
     ],
   },
   {
+    id: "ic_5_gladiator_arena",
+    region: "imperial_city",
+    minLevel: 10,
+    text: "王城的大竞技场，这里正在举行新兵比武。勇者在看台上看得热血沸腾。",
+    choices: [
+      {
+        text: "“带她下场去报名参加练习赛”",
+        resultText: "在一阵激烈的肉搏后，勇者虽然被打得鼻青脸肿，但那种面对强敌的经验是无价的。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 8), stamina: Math.min(100, state.hero.stamina + 35) } }),
+      },
+    ],
+  },
+  {
+    id: "ic_6_royal_garden",
+    region: "imperial_city",
+    minLevel: 5,
+    text: "翻过高墙就是皇室花园。勇者由于好奇想去看看那里的‘万花之王’。",
+    choices: [
+      {
+        text: "“用悬浮术带她飞过围墙”",
+        resultText: "在高空中俯瞰灯火辉煌的王城，勇者兴奋地尖叫。在落地后，她觉得这种刺激的体验比任何课程都有趣。",
+        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 25, suspicion: state.hero.suspicion + 12 } }),
+      },
+    ],
+  },
+  {
+    id: "ic_7_underground_market",
+    region: "imperial_city",
+    minLevel: 20,
+    text: "通过一个隐秘的井盖，你们进入了王城的地下黑市。这里充斥着各种违禁品。",
+    choices: [
+      {
+        text: "“带她去见识真实的阴暗面”",
+        resultText: "勇者被这里残酷的交易震撼了。她虽然有些不适，但对‘力量’的渴望变得更加现实。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 15), suspicion: state.hero.suspicion + 15 } }),
+      },
+    ],
+  },
+  {
+    id: "ic_8_fountain_wish",
+    region: "imperial_city",
+    minLevel: 1,
+    repeatable: true,
+    text: "广场中央有一座许愿池。人们往里面扔铜币祈求平安。",
+    choices: [
+      {
+        text: "“也让她投一枚币许愿”",
+        resultText: "“我希望露比姐姐能一直陪着我……”她低声嘟囔着，脸蛋微红。许愿池的水面荡漾起一圈涟漪。",
+        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 10 } }),
+      },
+    ],
+  },
+  {
+    id: "ic_9_hero_statue",
+    region: "imperial_city",
+    minLevel: 1,
+    text: "广场上屹立着开国勇者的巨大石像。勇者站在石像脚下，显得无比渺小。",
+    choices: [
+      {
+        text: "“告诉她总有一天她的雕像也会立在这里”",
+        resultText: "你的鼓励让她眼中燃起了火焰。这种自信的提升比任何训练都更显成效。",
+        effect: (state) => ({ hero: { ...state.hero, level: state.hero.level + 1, stamina: Math.min(100, state.hero.stamina + 5) } }),
+      },
+    ],
+  },
+  {
+    id: "ic_10_theater",
+    region: "imperial_city",
+    minLevel: 8,
+    text: "王城大剧院正在上演《屠龙勇者传》。勇者对舞台上夸张的动作指指点点。",
+    choices: [
+      {
+        text: "“带她去后台学习那些特技动作”",
+        resultText: "剧团老板被你的（威压）魅力打动，教了勇者几招华丽的剑技。虽然华而不实，但增加了她的敏捷感。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.min(100, state.hero.health + 5), stamina: Math.min(100, state.hero.stamina + 10) } }),
+      },
+    ],
+  },
+  {
+    id: "ic_11_canal_boat",
+    region: "imperial_city",
+    minLevel: 3,
+    repeatable: true,
+    text: "王城的运河穿城而过。你可以租一艘小船和勇者一起游览。",
+    choices: [
+      {
+        text: "“划船并享受宁静的时光”",
+        resultText: "微风拂面，水声潺潺。勇者在船上睡着了，整个人缩成小小的一团。这种宁静极大地恢复了她的状态。",
+        effect: (state) => ({ 
+          hero: { 
+            ...state.hero, 
+            health: Math.min(100, state.hero.health + 10), 
+            stamina: Math.min(100, state.hero.stamina + 10),
+            affection: state.hero.affection + 5 
+          } 
+        }),
+      },
+    ],
+  },
+  {
     id: "cf_repeatable_hunt",
     region: "country_forest",
     minLevel: 15,
@@ -1004,7 +1305,73 @@ export const DAY_EVENTS: DayEvent[] = [
       {
         text: "“鼓励她去追逐那些兔子”",
         resultText: "在一阵翻滚和冲刺后，她虽然没抓到兔子，但身手明显比刚才矫健了一些。",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 2, stamina: Math.max(0, state.hero.stamina - 10) } }),
+        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 2, stamina: Math.max(0, state.hero.stamina - 8) } }),
+      },
+    ],
+  },
+  {
+    id: "cf_7_abandoned_cottage",
+    region: "country_forest",
+    minLevel: 18,
+    text: "森林深处有一座废弃的小平房。门半掩着，里面似乎有微弱的光芒。",
+    choices: [
+      {
+        text: "“带她进去探索并寻找宝物”",
+        resultText: "里面居然存放着一箱生锈的盔甲。虽然重，但很有研究价值。勇者的力量得到了锻炼。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 2), stamina: Math.min(100, state.hero.stamina + 20) } }),
+      },
+    ],
+  },
+  {
+    id: "cf_8_beehive",
+    region: "country_forest",
+    minLevel: 16,
+    text: "树上挂着一个巨大的蜂巢，浓郁的蜂蜜香味飘了过来。勇者咽了口唾沫。",
+    choices: [
+      {
+        text: "“这是一个练习精准投掷的好机会”",
+        resultText: "“准头不错！”你夸奖道。虽然最后你们被蜜蜂追了三条街，但蜂蜜的味道真的很甜。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.min(100, state.hero.health + 5), stamina: Math.min(100, state.hero.stamina + 5), affection: state.hero.affection + 10 } }),
+      },
+    ],
+  },
+  {
+    id: "cf_9_whispering_stream",
+    region: "country_forest",
+    minLevel: 15,
+    repeatable: true,
+    text: "溪水潺潺流过。勇者想试着捕捉溪里游动的银色小鱼。",
+    choices: [
+      {
+        text: "“教她如何用魔力感应鱼的运动”",
+        resultText: "在你的点拨下，勇者第一次明白了‘预判’的含义。她的魔力操作变得精细了一些。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 10), affection: state.hero.affection + 5 } }),
+      },
+    ],
+  },
+  {
+    id: "cf_10_strange_mushroom_circle",
+    region: "country_forest",
+    minLevel: 22,
+    text: "地上出现了一圈奇怪的红蘑菇。传说进入圈内的人会听到精灵的歌声。",
+    choices: [
+      {
+        text: "“拉着她的手一起走进去”",
+        resultText: "伴随着空灵的歌声，你们感觉到精神从未有过的宁静。魔力的上限似乎被轻轻触动了。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 20), affection: state.hero.affection + 10 } }),
+      },
+    ],
+  },
+  {
+    id: "cf_11_bandit_camp",
+    region: "country_forest",
+    minLevel: 25,
+    text: "在那堆岩石后面，你们发现了一个小型的山贼营地。他们正在分赃。",
+    choices: [
+      {
+        text: "“这是一个检验实力的好机会，冲吧！”",
+        resultText: "在一场混乱的激战中，勇者展现出了超越以往的勇气。虽然受了点伤，但她真正感受到了‘战士’的重担。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 10), level: state.hero.level + 2, stamina: Math.min(100, state.hero.stamina + 15) } }),
       },
     ],
   },
@@ -1023,6 +1390,86 @@ export const DAY_EVENTS: DayEvent[] = [
     ],
   },
   {
+    id: "mf_6_ancient_altar",
+    region: "misty_forest",
+    minLevel: 35,
+    text: "雾气中耸立着一座古老的祭坛，周围布满了不知名的符文。它散发着令人不安的气息。",
+    choices: [
+      {
+        text: "“用你的血激活祭坛来获取禁忌知识”",
+        resultText: "祭坛发出了血红色的光芒。勇者得到了强大的魔力，但她的本性似乎受到了一丝侵蚀。她看向你的眼神也多了一份警惕。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 40), suspicion: state.hero.suspicion + 25 } }),
+      },
+    ],
+  },
+  {
+    id: "mf_7_lost_traveler",
+    region: "misty_forest",
+    minLevel: 32,
+    text: "你们遇到了一个在雾中转了好几天的旅行者。他神志不清，一直在喃喃自语。",
+    choices: [
+      {
+        text: "“用安魂曲帮他稳定情绪”",
+        resultText: "在你的魔力安抚下，旅行者清醒了过来。你的慈悲让勇者感到由衷的敬佩。",
+        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 15, mana: Math.min(100, state.hero.mana + 5) } }),
+      },
+    ],
+  },
+  {
+    id: "mf_8_withered_tree",
+    region: "misty_forest",
+    minLevel: 38,
+    text: "森林中心有一棵巨大的枯萎古树，它的树冠几乎遮蔽了天空。树干中似乎囚禁着某种灵魂。",
+    choices: [
+      {
+        text: "“尝试与古树中的残魂沟通”",
+        resultText: "无数古老的回移涌入勇者的脑海。这不仅是重担，更是传承。她的意志品质得到了升华。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 30), level: state.hero.level + 3 } }),
+      },
+    ],
+  },
+  {
+    id: "mf_9_fog_beast_ambush",
+    region: "misty_forest",
+    minLevel: 35,
+    repeatable: true,
+    text: "浓雾中突然伸出一只巨大的爪子！某种不可见的猎食者正潜伏在你们身旁。",
+    choices: [
+      {
+        text: "“闭上眼，通过空气的流动来反击”",
+        resultText: "在你的引导下，勇者凭直觉挥出了一剑。随着一声惨叫，雾气散去了。这种‘心眼’的训练是极其宝贵的。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 5), stamina: Math.min(100, state.hero.stamina + 20) } }),
+      },
+    ],
+  },
+  {
+    id: "mf_10_glowing_ferns",
+    region: "misty_forest",
+    minLevel: 31,
+    repeatable: true,
+    text: "阴暗的树根旁长着一些会发光的蕨类植物。它们不仅美丽，似乎还带有某种魔力。",
+    choices: [
+      {
+        text: "“让勇者采集一些编成花环戴上”",
+        resultText: "发光的绿色光环在迷雾中照亮了勇者的脸。她开心地转了个圈，觉得这是她见过最美的饰品。",
+        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 20 } }),
+      },
+    ],
+  },
+  {
+    id: "mf_11_echo_well",
+    region: "misty_forest",
+    minLevel: 40,
+    text: "传说迷雾森林里有一口能回溯过去的井。勇者好奇地探头看去，井水倒映出了她从未见过的景象。",
+    choices: [
+      {
+        text: "“这就是命运的指引”",
+        resultText: "井水中闪过了勇者儿时的碎片。这种宿命感让她对你产生了一种命中注定的依赖。",
+        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 15, mana: Math.min(100, state.hero.mana + 10) } }),
+      },
+    ],
+  },
+  {
     id: "if_repeatable_survival",
     region: "ice_field",
     minLevel: 45,
@@ -1033,6 +1480,93 @@ export const DAY_EVENTS: DayEvent[] = [
         text: "“在这里生个小火堆暂时避寒”",
         resultText: "跳动的火苗映红了她的脸。这种共同生存的经历极大地消释了她对你身份的怀疑。",
         effect: (state) => ({ hero: { ...state.hero, health: Math.min(100, state.hero.health + 10), affection: state.hero.affection + 8, suspicion: Math.max(0, state.hero.suspicion - 5) } }),
+      },
+    ],
+  },
+  {
+    id: "if_5_frozen_statue",
+    region: "ice_field",
+    minLevel: 50,
+    text: "雪地里矗立着一座栩栩如生的冰雕，刻画的是一位仰望星空的少女。勇者盯着它，陷入了沉迷。",
+    choices: [
+      {
+        text: "“用魔力解析冰雕中的神圣气息”",
+        resultText: "冰雕中竟然封存着一段失传的咒文。这对身为勇者的她来说是莫大的补益。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 25) } }),
+      },
+    ],
+  },
+  {
+    id: "if_6_yeti_snowball_fight",
+    region: "ice_field",
+    minLevel: 48,
+    text: "一群小雪怪正在打雪仗。它们见到你们，兴中勃勃地投掷了几枚雪球作为‘欢迎礼’。",
+    choices: [
+      {
+        text: "“带头反击！让它们见识见识勇者的精准度”",
+        resultText: "雪地里充满了欢声笑语。虽然被雪球砸得晕乎乎的，但勇者的反射神经得到了锻炼。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 5), stamina: Math.min(100, state.hero.stamina + 10), affection: state.hero.affection + 15 } }),
+      },
+    ],
+  },
+  {
+    id: "if_7_aurora_dance",
+    region: "ice_field",
+    minLevel: 55,
+    text: "今晚的夜空出现了罕见的极光。勇者兴奋地拉着你在雪地上奔跑，试图触摸那流动的光幕。",
+    choices: [
+      {
+        text: "“在这神圣的光芒下共同祈祷”",
+        resultText: "极光仿佛响应了你们。一种柔和的魔力洗涤了你们的疲惫。勇者靠在你的肩头，沉沉睡去。",
+        effect: (state) => ({ 
+          hero: { 
+            ...state.hero, 
+            health: 100, 
+            mana: Math.min(100, state.hero.mana + 20),
+            affection: state.hero.affection + 35 
+          } 
+        }),
+      },
+    ],
+  },
+  {
+    id: "if_8_cracked_glacier",
+    region: "ice_field",
+    minLevel: 46,
+    text: "脚下的冰川突然发出了危险的嘎吱声。一道裂缝正在迅速扩大。",
+    choices: [
+      {
+        text: "“跳过去！展示你的绝佳平衡感”",
+        resultText: "在惊险的跳跃中，勇者展现出了超越以往的勇气。虽然最后由于脚滑而摔了个满头包，但她确实变强了。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 6), stamina: Math.min(100, state.hero.stamina + 25) } }),
+      },
+    ],
+  },
+  {
+    id: "if_9_polar_flower",
+    region: "ice_field",
+    minLevel: 45,
+    repeatable: true,
+    text: "在厚厚的积雪下，竟然开出了一朵洁白如玉的冰山雪莲。",
+    choices: [
+      {
+        text: "“小心地采摘下来，这能炼制高级恢复药”",
+        resultText: "勇者在采摘时异常小心，仿佛在呵护一个脆弱的梦。由于成功的操作，她的精神力（Mana）得到了细微提升。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 5), affection: state.hero.affection + 5 } }),
+      },
+    ],
+  },
+  {
+    id: "if_10_winter_fishing",
+    region: "ice_field",
+    minLevel: 50,
+    repeatable: true,
+    text: "你在一处冰面上凿开了一个洞。你可以教勇者如何进行冰钓。",
+    choices: [
+      {
+        text: "“耐心地教她观察水面的波动”",
+        resultText: "钓鱼需要极大的耐心。勇者虽然坐不住，但在你的陪伴下，她竟然破天荒地坚持了一个小时。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 15), stamina: Math.min(100, state.hero.stamina + 5), affection: state.hero.affection + 10 } }),
       },
     ],
   },
@@ -1051,6 +1585,86 @@ export const DAY_EVENTS: DayEvent[] = [
     ],
   },
   {
+    id: "d_4_mirage_palace",
+    region: "desert",
+    minLevel: 65,
+    text: "远方的地平线上隐约出现了一座华丽的宫殿。那是海市蜃楼，还是真实的存在？",
+    choices: [
+      {
+        text: "“带她走入幻象，在虚实之间磨砺意志”",
+        resultText: "穿梭在幻象中是极大的精神消耗。勇者看清了世界的本质，虽然头晕目眩，但对魔法的认知更深了。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 25), suspicion: state.hero.suspicion + 8 } }),
+      },
+    ],
+  },
+  {
+    id: "d_5_desert_scorpion",
+    region: "desert",
+    minLevel: 62,
+    text: "一只磨盘大小的巨型蝎子从沙地里钻了出来，挥舞着泛着紫光的钩尾。",
+    choices: [
+      {
+        text: "“让勇者在流沙中练习回避反击”",
+        resultText: "在软绵绵的沙地上战斗极其困难。勇者虽然被蝎尾扫到了几下，但她终于掌握了在恶劣环境中发力的技巧。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 10), stamina: Math.min(100, state.hero.stamina + 35) } }),
+      },
+    ],
+  },
+  {
+    id: "d_6_ancient_caravan",
+    region: "desert",
+    minLevel: 60,
+    text: "你们遇到了一支正在穿越荒漠的古老商队。他们似乎在寻找传说中的‘不干涸之泉’。",
+    choices: [
+      {
+        text: "“为他们施加一个保护风暴的法阵”",
+        resultText: "商队领头人送给了勇者一个刻有奇怪符号的罗盘。你的善举也让勇者觉得你是一个正义之士。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 5), affection: state.hero.affection + 15, suspicion: Math.max(0, state.hero.suspicion - 10) } }),
+      },
+    ],
+  },
+  {
+    id: "d_7_sleeping_in_dune",
+    region: "desert",
+    minLevel: 60,
+    repeatable: true,
+    text: "沙漠的夜晚温差极大。勇者在火堆旁冻得缩成一团。",
+    choices: [
+      {
+        text: "“默默地把她拉进自己的披风里”",
+        resultText: "那是她经历过最温暖的夜晚。即使知道这可能是一个陷阱，她也不愿意醒来。",
+        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 35, health: Math.min(100, state.hero.health + 15) } }),
+      },
+    ],
+  },
+  {
+    id: "d_8_buried_statue",
+    region: "desert",
+    minLevel: 68,
+    text: "沙丘下露出了半截巨大的石像头部。它的眼眶里似乎还残留着某种远古魔力。",
+    choices: [
+      {
+        text: "“教她如何引导并吸收这些残留的魔力”",
+        resultText: "这种直接的魔力灌注极其危险。勇者的身体由于负荷过重而颤抖，但她的魔力容量被暴力地扩充了。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 12), mana: Math.min(100, state.hero.mana + 55), level: state.hero.level + 2 } }),
+      },
+    ],
+  },
+  {
+    id: "d_9_sand_surfing",
+    region: "desert",
+    minLevel: 60,
+    repeatable: true,
+    text: "看着连绵起伏的巨大沙丘，你产生了一个有趣的想法。你可以教勇者如何‘滑沙’。",
+    choices: [
+      {
+        text: "“虽然看起来很幼稚，但能锻炼平衡性”",
+        resultText: "“唔噢噢噢！”勇者在沙丘间飞驰。虽然由于最后没能停下来而吃了一嘴沙子，但她开心地不得了。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.min(100, state.hero.health + 5), stamina: Math.min(100, state.hero.stamina + 10), affection: state.hero.affection + 15 } }),
+      },
+    ],
+  },
+  {
     id: "c_repeatable_training",
     region: "dragon_bone_canyon",
     minLevel: 75,
@@ -1060,21 +1674,292 @@ export const DAY_EVENTS: DayEvent[] = [
       {
         text: "“让她在狂风中练习稳定的架势”",
         resultText: "双腿深陷泥土，对抗着风暴。虽然极其辛苦，但她的力量根基已经坚如磐石。",
-        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 10, stamina: Math.max(0, state.hero.stamina - 30) } }),
+        effect: (state) => ({ hero: { ...state.hero, health: state.hero.health + 10, stamina: Math.max(0, state.hero.stamina - 15) } }),
       },
     ],
   },
   {
-    id: "vol_repeatable_fishing",
+    id: "d_dehydration",
+    region: "desert",
+    minLevel: 60,
+    repeatable: true,
+    text: "烈日曝晒下，勇者的嘴唇已经由于缺水而干裂。她看起来随时都会晕倒。",
+    choices: [
+      {
+        text: "“在她走在前面时，偷偷变出水来灌入水壶”",
+        resultText: "“诶？水壶里还有吗？”勇者惊喜地大口喝水。你的秘密行动保住了她的体力，但也让她产生了一丝怀疑。",
+        effect: (state) => ({ 
+          hero: { ...state.hero, affection: state.hero.affection + 10, suspicion: state.hero.suspicion + 5 } 
+        }),
+      },
+      {
+        text: "“假装也很口渴，并把最后一滴水递给她”",
+        resultText: "勇者看着你也干裂的嘴唇，眼泪汪汪地喝下了水。“露比姐姐，你真好……”虽然体力透支了，但她的心被你俘获了。",
+        effect: (state) => ({ 
+          hero: { ...state.hero, stamina: Math.max(0, state.hero.stamina - 10), affection: state.hero.affection + 25 } 
+        }),
+      },
+    ],
+  },
+  {
+    id: "vol_fire_spirit_mischief",
     region: "volcano",
     minLevel: 90,
     repeatable: true,
-    text: "流淌的岩浆中竟然有罕见的火灵在跳动。勇者好奇这些能不能用来附魔。",
+    text: "一个灼热的火精灵从岩浆中跃出，发出一阵尖细的笑声。它朝勇者的头顶丢了一块燃烧的余烬！",
     choices: [
       {
-        text: "“冒着高温帮她捕捉那些灵火”",
-        resultText: "你的手在数千度的高温中安然无恙，犹如探入微温的水中。勇者瞠目结舌地看着你捧出那一簇簇如红宝石般的火苗。这一刻，她在你身上看到了某种名为“救赎”的神性（其实只是免火咒）。",
-        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 30), affection: state.hero.affection + 15 } }),
+        text: "“用手帮她扑灭火焰”",
+        resultText: "你毫不畏惧高温，轻而易举扑灭了火焰。勇者虽然被烫了一下，但更关心你有没有受伤。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 2), affection: state.hero.affection + 15 } }),
+      },
+      {
+        text: "“嘲笑她被余烬烫到时的怪叫”",
+        resultText: "火精灵见你大笑，也跟着欢腾雀跃。勇者的魔力被这股无名火干扰了，心情也变得糟糕。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.max(0, state.hero.mana - 8), suspicion: state.hero.suspicion + 8 } }),
+      },
+    ],
+  },
+  {
+    id: "c_5_dragon_soul_relic",
+    region: "dragon_bone_canyon",
+    minLevel: 80,
+    text: "在峡谷深处，你们发现了一根散发着蓝光的大龙骨。它似乎是远古巨龙的意志残留。",
+    choices: [
+      {
+        text: "“引导她去感知那种古老的孤独”",
+        resultText: "勇者在龙骨前静坐了很久。当她睁开眼时，她的目光中带上了一丝‘龙威’。这种阶级的跨越让她连升好几级。",
+        effect: (state) => ({ hero: { ...state.hero, level: state.hero.level + 4, mana: Math.min(100, state.hero.mana + 30) } }),
+      },
+    ],
+  },
+  {
+    id: "c_6_echo_abyss",
+    region: "dragon_bone_canyon",
+    minLevel: 78,
+    text: "峡谷中回荡着低沉的震动。勇者怀疑这下面是不是真的沉睡着什么恐怖的存在。",
+    choices: [
+      {
+        text: "“这是对内心恐惧的挑战”",
+        resultText: "你拉着她的手站在悬崖边缘。由于你的支撑，她战胜了对深渊的恐惧。这种意志的磨砺提升了她的全属性。",
+        effect: (state) => ({ 
+          hero: { 
+            ...state.hero, 
+            health: Math.min(100, state.hero.health + 10),
+            stamina: Math.min(100, state.hero.stamina + 10),
+            mana: Math.min(100, state.hero.mana + 10),
+            affection: state.hero.affection + 25 
+          } 
+        }),
+      },
+    ],
+  },
+  {
+    id: "c_7_obsidian_nest",
+    region: "dragon_bone_canyon",
+    minLevel: 76,
+    text: "岩壁上挂着一个黑曜石筑成的鸟巢。里面有一颗闪烁着不详光芒的紫蛋。",
+    choices: [
+      {
+        text: "“为了变强，尝试吸收蛋里的能量”",
+        resultText: "狂暴的能量瞬间席卷了勇者的全身。虽然她成功吞噬了这股力量，但她的神情变得冷静得令人害怕。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 50), suspicion: state.hero.suspicion + 20 } }),
+      },
+    ],
+  },
+  {
+    id: "c_8_falling_rocks",
+    region: "dragon_bone_canyon",
+    minLevel: 75,
+    repeatable: true,
+    text: "峡谷上方传来了碎石滚落的声音。一场不小的落石流正朝你们袭来！",
+    choices: [
+      {
+        text: "“用瞬移带她离开危险区”",
+        resultText: "你在千钧一发之际抱起她出现在百米开外。虽然惊魂未定，但她对你的‘神出鬼没’产生了极大的依赖。",
+        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 20, suspicion: state.hero.suspicion + 10 } }),
+      },
+    ],
+  },
+  {
+    id: "vol_4_lava_surfing",
+    region: "volcano",
+    minLevel: 92,
+    text: "勇者看着那一波波涌动的岩浆，突发奇想：‘露比姐姐，我们能不能在那上面划船？’",
+    choices: [
+      {
+        text: "“用冰系魔法凝结出一条冰船（这也太疯狂了）”",
+        resultText: "红与青的视觉冲击下，你们在岩浆河上极速前进。虽然冰块在迅速融化，但那种极致的刺激让勇者终生难忘。",
+        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 45, suspicion: state.hero.suspicion + 25 } }),
+      },
+    ],
+  },
+  {
+    id: "vol_5_phoenix_feather",
+    region: "volcano",
+    minLevel: 95,
+    text: "火山口的边缘悬挂着一根金色的羽毛。那似乎是不死鸟留下的遗存。",
+    choices: [
+      {
+        text: "“孤注一掷跳过去采摘”",
+        resultText: "勇者在千钧一发之际抓住了羽毛。这种向死而生的经历让她的生命力（Health）上限得到了质的飞跃。",
+        effect: (state) => ({ hero: { ...state.hero, health: 100, level: state.hero.level + 3, stamina: Math.min(100, state.hero.stamina + 20) } }),
+      },
+    ],
+  },
+  {
+    id: "vol_6_volcanic_ash_cloud",
+    region: "volcano",
+    minLevel: 90,
+    repeatable: true,
+    text: "天空中飘落着厚厚的火山灰，视线变得模糊。空气中充满了硫磺的味道。",
+    choices: [
+      {
+        text: "“用风系统魔法清理周边的空气”",
+        resultText: "你在污浊中开辟出了一方净土。勇者躲在你怀里，感受着那难得的清新。由于成功的魔力控制，你的熟练度（Mana）提升了。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 15), affection: state.hero.affection + 10 } }),
+      },
+    ],
+  },
+  {
+    id: "vol_7_lava_golem_clash",
+    region: "volcano",
+    minLevel: 98,
+    text: "一尊巨大的岩浆魔像挡住了去路。它象征着自然的狂怒。",
+    choices: [
+      {
+        text: "“这就是最终决战前的最后一课！”",
+        resultText: "在汗水与火焰的交织中，勇者挥出了沉重的一剑。魔像崩解了。虽然她累得指尖都在颤抖，但她已经具备了挑战魔王的资格。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 15), stamina: Math.min(100, state.hero.stamina + 50), level: state.hero.level + 5 } }),
+      },
+    ],
+  },
+  {
+    id: "vol_8_hot_rock_spa",
+    region: "volcano",
+    minLevel: 90,
+    repeatable: true,
+    text: "这里的地表温度正合适。勇者建议躺在温热的岩石上‘烙大饼’。",
+    choices: [
+      {
+        text: "“帮她按摩由于训练而酸痛的肌肉”",
+        resultText: "在你的揉捏下，她的疲劳一扫而空。这种亲昵的接触让她的脸比脚下的岩石还要红。",
+        effect: (state) => ({ hero: { ...state.hero, stamina: Math.min(100, state.hero.stamina + 25), affection: state.hero.affection + 20 } }),
+      },
+    ],
+  },
+  {
+    id: "vol_9_obsidian_forge",
+    region: "volcano",
+    minLevel: 94,
+    text: "这里有一座天然的熔炉，正不断喷发出纯净的魔力火花。",
+    choices: [
+      {
+        text: "“教她如何将魔力注入武器进行临时附魔”",
+        resultText: "在你的指导下，勇者的长剑亮起了赤红的光芒。这对接下来的战斗是巨大的助力。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 20), level: state.hero.level + 1 } }),
+      },
+    ],
+  },
+  {
+    id: "if_11_snow_rabbit_follow",
+    region: "ice_field",
+    minLevel: 45,
+    repeatable: true,
+    text: "一只害羞的小雪兔一直跟在你们身后。它似乎被勇者身上的某种气息吸引了。",
+    choices: [
+      {
+        text: "“分一点干粮给它吃（它看起来很饿）”",
+        resultText: "小兔子蹭了蹭勇者的手心。这种纯真的互动让勇者的内心得到了极大的治愈。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.min(100, state.hero.health + 5), affection: state.hero.affection + 12 } }),
+      },
+    ],
+  },
+  {
+    id: "d_10_sand_buried_treasure",
+    region: "desert",
+    minLevel: 63,
+    text: "你在沙地里踢到了一个坚硬的角。挖开一看，居然是一个镀金的大木箱。",
+    choices: [
+      {
+        text: "“暴力拆开它看看里面有什么”",
+        resultText: "箱子里装满了珍贵的古代货币和一些增幅药水。勇者的各项数值都有了不错的提升。",
+        effect: (state) => ({ 
+          hero: { 
+            ...state.hero, 
+            health: Math.min(100, state.hero.health + 10),
+            stamina: Math.min(100, state.hero.stamina + 10),
+            mana: Math.min(100, state.hero.mana + 10)
+          } 
+        }),
+      },
+    ],
+  },
+  {
+    id: "d_11_shifting_dune_maze",
+    region: "desert",
+    minLevel: 60,
+    repeatable: true,
+    text: "这片沙丘由于风向改变而在不断移动，仿佛一个活着的迷宫。你们似乎迷路了。",
+    choices: [
+      {
+        text: "“利用星象来指引正确的道路”",
+        resultText: "在你的博学（作弊）指引下，你们走出了困境。勇者对你的崇拜之情溢于言表。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 15), affection: state.hero.affection + 10 } }),
+      },
+    ],
+  },
+  {
+    id: "c_10_crystal_cave",
+    region: "dragon_bone_canyon",
+    minLevel: 77,
+    text: "峡谷石壁上裂开了一个口子，里面闪烁着晶莹的紫色光芒。这是一处晶石矿脉。",
+    choices: [
+      {
+        text: "“教她如何挖掘并吸收晶石能量”",
+        resultText: "挖掘过程极其耗费体力和魔力。但在成功吸收后，勇者的等级得到了显著提升。",
+        effect: (state) => ({ hero: { ...state.hero, health: Math.max(0, state.hero.health - 6), mana: Math.min(100, state.hero.mana + 20), level: state.hero.level + 2 } }),
+      },
+    ],
+  },
+  {
+    id: "c_11_thunder_storm",
+    region: "dragon_bone_canyon",
+    minLevel: 82,
+    text: "干燥的空气引发了剧烈的雷暴。紫色的闪电不断劈向峡谷底部的金属矿藏。",
+    choices: [
+      {
+        text: "“利用雷电的压力训练剑术”",
+        resultText: "在雷鸣电闪中起舞需要极大的胆识。勇者虽然被震得双耳轰鸣，但她的力量（Stamina）已经无人能敌。",
+        effect: (state) => ({ hero: { ...state.hero, stamina: Math.min(100, state.hero.stamina + 45), health: Math.max(0, state.hero.health - 5) } }),
+      },
+    ],
+  },
+  {
+    id: "vol_10_obsidian_beach",
+    region: "volcano",
+    minLevel: 90,
+    repeatable: true,
+    text: "冷却的岩浆形成了黑亮的黑曜石海滩。这里的沙子踩上去沙沙作响。",
+    choices: [
+      {
+        text: "“和她一起收集亮晶晶的黑曜石碎片”",
+        resultText: "你们像孩子一样在海滩上寻宝。虽然没有任何实际收益，但这份宁静是决战前最后的慰藉。",
+        effect: (state) => ({ hero: { ...state.hero, affection: state.hero.affection + 30 } }),
+      },
+    ],
+  },
+  {
+    id: "vol_11_lava_fountain",
+    region: "volcano",
+    minLevel: 93,
+    repeatable: true,
+    text: "岩浆像喷泉一样从地裂中涌出。勇者觉得这景色既美丽又恐怖。",
+    choices: [
+      {
+        text: "“用结界保护她近距离观察”",
+        resultText: "在你的保护下，她感受到了自然的伟力。这种宏大的体验让她的精神世界（Mana）得到了升华。",
+        effect: (state) => ({ hero: { ...state.hero, mana: Math.min(100, state.hero.mana + 25), affection: state.hero.affection + 10 } }),
       },
     ],
   },
@@ -1153,6 +2038,104 @@ export const NIGHT_PROPOSALS: NightProposal[] = [
     text: "魔王城有很多空房间，可以改造成‘恐怖主题民宿’，吸引那些寻求刺激的冒险者。",
     swipeLeft: { text: "我的私人城堡不接待外客。", effects: { resources: -5 } },
     swipeRight: { text: "记得多收点门票钱。", effects: { resources: +30, morale: -10, climate: +15 } },
+  },
+  {
+    id: "n_19_weapon_forge",
+    speaker: "独眼的矮人铁匠",
+    text: "大人，我们需要在熔岩区建立一个新的军火工厂。魔族的武器已经钝到连勇者的皮肤都划不破了！",
+    swipeLeft: { text: "我们现在提倡和平。", effects: { military: -10, morale: +5 } },
+    swipeRight: { text: "开工！我要更锋利的巨剑。", effects: { military: +20, resources: -15, climate: -10 } },
+  },
+  {
+    id: "n_21_magic_labs",
+    speaker: "疯狂的炼金术士",
+    text: "给我一点活体……我是说，一点经费，我就能研发出让勇者迷失方向的新型迷幻剂！",
+    swipeLeft: { text: "这种手段太卑鄙了。", effects: { morale: +5, climate: -5 } },
+    swipeRight: { text: "听起来很有用。", effects: { resources: -10, military: +5, climate: +15 } },
+  },
+  {
+    id: "n_22_monster_breeding",
+    speaker: "触手怪养育员",
+    text: "大人，后山的史莱姆群泛滥成灾了，它们甚至开始吞噬实验室的样本桶。是清理掉还是……作为特产出售？",
+    swipeLeft: { text: "统统铲除。", effects: { resources: -2, climate: -5 } },
+    swipeRight: { text: "做成史莱姆果冻礼盒。", effects: { resources: +15, morale: -5 } },
+  },
+  {
+    id: "n_23_prophecy",
+    speaker: "盲眼的占卜婆婆",
+    text: "在梦境的深处，我看到了勇者的觉醒……我们需要在每个村庄建立哨塔来监视她的动向。",
+    swipeLeft: { text: "让她自己成长。", effects: { morale: +5, climate: -5 } },
+    swipeRight: { text: "密切视察。", effects: { resources: -8, military: +10, climate: +5 } },
+  },
+  {
+    id: "n_24_tax_reform",
+    speaker: "死板的僵尸书记员",
+    text: "大人，现在的魔界租金太乱了。我建议对那些占据高级洞穴的巨魔征收‘地壳占用税’。",
+    swipeLeft: { text: "他们会造反的。", effects: { morale: +10, military: -5 } },
+    swipeRight: { text: "这是一笔横财。", effects: { resources: +25, morale: -15 } },
+  },
+  {
+    id: "n_25_demon_expo",
+    speaker: "浮夸的营销大师",
+    text: "我们应该举办第一届‘全魔界选美大赛’，展示我们除了獠牙以外的多样性，这有助于改善外界评价。",
+    swipeLeft: { text: "无聊的把戏。", effects: { morale: -3 } },
+    swipeRight: { text: "我要当评委。", effects: { resources: -20, morale: +35 } },
+  },
+  {
+    id: "n_26_spy_infiltration",
+    speaker: "冷酷的暗杀者之首",
+    text: "人类王国正派人潜入我们的矿区。是直接让他们‘消失’，还是派人去他们王都搞点破坏作为回礼？",
+    swipeLeft: { text: "就地处决。", effects: { military: +5, climate: +5 } },
+    swipeRight: { text: "礼尚往来。", effects: { military: +15, resources: -10, climate: +10 } },
+  },
+  {
+    id: "n_27_dungeon_cleanup",
+    speaker: "勤恳的食尸鬼保洁",
+    text: "大人，地下城里的冒险者尸体太多了，容易引发瘟疫。我们需要建立一个自动清理法阵。",
+    swipeLeft: { text: "让它们自然腐烂。", effects: { morale: -10, climate: +15 } },
+    swipeRight: { text: "环保第一。", effects: { resources: -5, climate: -10, morale: +5 } },
+  },
+  {
+    id: "n_28_air_pollution",
+    speaker: "忧虑的火龙飞行员",
+    text: "由于火山喷发太剧烈，高空的可见度已经低到我们要撞到鸟身女妖的家了！建议限制岩浆产出。",
+    swipeLeft: { text: "戴上护目镜飞。", effects: { military: -5, resources: +10 } },
+    swipeRight: { text: "为了安全，限流吧。", effects: { resources: -10, climate: -20, morale: +5 } },
+  },
+  {
+    id: "n_29_soul_trading",
+    speaker: "奸诈的灵魂交易商",
+    text: "我这里有一批优质的‘正义勇者残魂’。如果您把它们注入盔甲，我们的军势将不可阻挡。",
+    swipeLeft: { text: "我不吃这种带怨气的东西。", effects: { morale: +5, military: -5 } },
+    swipeRight: { text: "这是极品补药。", effects: { resources: -30, military: +45, climate: +20 } },
+  },
+  {
+    id: "n_30_mirror_trap",
+    speaker: "神秘的镜之恶魔",
+    text: "我可以把这森林里的溪流都变成幻影镜面，这样任何入侵者都会在自我否定中崩溃。",
+    swipeLeft: { text: "太卑鄙了。", effects: { morale: +2, climate: -5 } },
+    swipeRight: { text: "这才是真正的陷阱。", effects: { military: +10, climate: +15, resources: -5 } },
+  },
+  {
+    id: "n_31_demon_school",
+    speaker: "博学的地狱教授",
+    text: "我们需要建立一所‘职业魔王学校’，不仅教魔法，也要教管理。那些下级恶魔太没文化了。",
+    swipeLeft: { text: "拳头就是文化。", effects: { military: +5, morale: -5 } },
+    swipeRight: { text: "知识就是力量。", effects: { resources: -25, morale: +20, military: +5 } },
+  },
+  {
+    id: "n_32_abyss_drilling",
+    speaker: "贪婪的钻头工头",
+    text: "我们在深渊第十八层挖到了亮晶晶的东西，像是某种远古神灵的牙齿，价值连城！",
+    swipeLeft: { text: "那里埋着禁忌，停下。", effects: { morale: +5, resources: -10 } },
+    swipeRight: { text: "挖！一颗都别放过。", effects: { resources: +60, climate: +30, morale: -20 } },
+  },
+  {
+    id: "n_33_music_festival",
+    speaker: "朋克风的无头骑士",
+    text: "大人，别整天管那些征服世界的差事了。让我们在冥河之巅办一场摇滚音乐祭吧！",
+    swipeLeft: { text: "我喜欢安静。", effects: { morale: -5 } },
+    swipeRight: { text: "把音响开到最大！", effects: { resources: -15, morale: +50 } },
   },
 ];
 
@@ -1342,7 +2325,7 @@ export const PROLOGUE_DIALOGUE = [
   },
   {
     type: "TUTORIAL",
-    text: "现在可以安排勇者的日程了！\n初始开放地区只有【绿叶村】【王城】，每完成一项随机事件等级+1，随着等级提升会解锁更多区域。\n【王城】可以回复50%已损失数值，但会一次直升5级，请适当规划时间~",
+    text: "现在可以安排勇者的日程了！\n初始开放地区有【绿叶村】与【王城】，随着等级提升会解锁更多区域。\n当勇者达到100级后将进入最终冲刺，届时普通区域将锁定，仅能进入王城与【魔王城】准备决战。\n在王城特训能恢复健康、体力与魔力，并一次提升5级，请合理规划日程！",
   },
 ];
 

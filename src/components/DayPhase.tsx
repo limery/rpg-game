@@ -19,6 +19,8 @@ export const DayPhase: React.FC<DayPhaseProps> = ({ state, onEventComplete, onTr
   const [selectedChoice, setSelectedChoice] = useState<any | null>(null);
   const [showResult, setShowResult] = useState(false);
 
+  const [isFailure, setIsFailure] = useState(false);
+
   const handleRegionClick = (regionId: string) => {
     // Special case: Demon Castle
     if (regionId === "demon_castle") {
@@ -49,11 +51,6 @@ export const DayPhase: React.FC<DayPhaseProps> = ({ state, onEventComplete, onTr
     let eventToTrigger: DayEvent | null = null;
 
     if (eligibleEvents.length > 0) {
-      // User requested "randomly appear" (两种事件随机出现)
-      // We mix them but give limited events a consistent presence
-      // If we just pick from eligibleEvents, repeatable ones might drown out limited ones if there are many.
-      // So we can do a 2-step: 50% chance to pick from Limited pool (if exists), else repeatable.
-      // Or just combine them. To be strictly "randomly appearing" together:
       eventToTrigger = eligibleEvents[Math.floor(Math.random() * eligibleEvents.length)];
     }
 
@@ -61,6 +58,7 @@ export const DayPhase: React.FC<DayPhaseProps> = ({ state, onEventComplete, onTr
       setSelectedEvent(eventToTrigger);
       setShowResult(false);
       setSelectedChoice(null);
+      setIsFailure(false);
     } else {
       // Fallback event if none found
       setSelectedEvent({
@@ -79,21 +77,28 @@ export const DayPhase: React.FC<DayPhaseProps> = ({ state, onEventComplete, onTr
       });
       setShowResult(false);
       setSelectedChoice(null);
+      setIsFailure(false);
     }
   };
 
   const handleChoiceSelect = (choice: any) => {
+    const roll = Math.random();
+    const failed = choice.failChance ? roll < choice.failChance : false;
+    
+    setIsFailure(failed);
     setSelectedChoice(choice);
     setShowResult(true);
   };
 
   const handleCloseEvent = () => {
     if (selectedEvent && selectedChoice) {
-      onEventComplete(selectedChoice.effect, selectedEvent.id);
+      const effectToUse = isFailure && selectedChoice.failEffect ? selectedChoice.failEffect : selectedChoice.effect;
+      onEventComplete(effectToUse, selectedEvent.id);
     }
     setSelectedEvent(null);
     setSelectedChoice(null);
     setShowResult(false);
+    setIsFailure(false);
   };
 
   const getSceneType = (regionId: string): "VILLAGE" | "FOREST" | "CANYON" | "SNOWFIELD" | "CITY" | "DESERT" | "VOLCANO" => {
@@ -176,9 +181,14 @@ export const DayPhase: React.FC<DayPhaseProps> = ({ state, onEventComplete, onTr
             
             {REGIONS.map(region => {
               const remainingTurns = 100 - state.currentDay;
-              const isTimeLocked = region.id === "imperial_city" && remainingTurns <= 10;
               const isLevelLocked = hero.level < region.minLevel;
-              const isLocked = isLevelLocked || isTimeLocked;
+              const isTimeLocked = region.id === "imperial_city" && remainingTurns <= 10;
+              
+              // New Logic: At level 100, only the Imperial City and Demon Castle are accessible.
+              const isPostLevel100 = hero.level >= 100;
+              const isFinalRegion = region.id === "imperial_city" || region.id === "demon_castle";
+              const isLocked = isLevelLocked || isTimeLocked || (isPostLevel100 && !isFinalRegion);
+              
               return (
                 <motion.button
                   key={region.id}
@@ -224,7 +234,13 @@ export const DayPhase: React.FC<DayPhaseProps> = ({ state, onEventComplete, onTr
   
                   <div className="mb-6">
                     <p className="text-white/95 font-serif italic text-base md:text-lg leading-relaxed border-l-4 border-red-900/50 pl-6 py-2 bg-white/5">
-                      {!showResult ? selectedEvent.text : (selectedChoice?.resultText || "冒险继续进行……")}
+                      {!showResult ? selectedEvent.text : (() => {
+                        const text = isFailure ? selectedChoice?.failText : selectedChoice?.resultText;
+                        if (typeof text === 'function') {
+                          return text(state);
+                        }
+                        return text || (isFailure ? "虽然想努力一把，但还是搞砸了……" : "冒险继续进行……");
+                      })()}
                     </p>
                   </div>
   

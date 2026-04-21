@@ -41,8 +41,11 @@ export interface GameState {
 
 export interface Choice {
   text: string;
-  resultText?: string;
+  resultText?: string | ((state: GameState) => string);
+  failText?: string | ((state: GameState) => string);
+  failChance?: number; // 0 to 1, e.g. 0.1 for 10%
   effect: (state: GameState) => Partial<GameState>;
+  failEffect?: (state: GameState) => Partial<GameState>;
 }
 
 export interface DayEvent {
