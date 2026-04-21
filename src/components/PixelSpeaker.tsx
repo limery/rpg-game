@@ -32,7 +32,7 @@ export const PixelSpeaker: React.FC<PixelSpeakerProps> = ({ name, className }) =
   return (
     <div className={cn("w-full h-full bg-[#1a0f0a] flex items-center justify-center border-4 border-red-900/40 shadow-inner overflow-hidden relative", className)}>
       {isBarry && (
-        <img src="/upload/Barry.png" className="absolute inset-0 w-full h-full object-cover z-10" referrerPolicy="no-referrer" alt="Barry" />
+        <img src="/upload/barry.png" className="absolute inset-0 w-full h-full object-cover z-10" referrerPolicy="no-referrer" alt="Barry" />
       )}
       
       <svg viewBox="0 0 64 64" className="w-16 h-16 relative z-0">
