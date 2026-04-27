@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { GameState, HeroStats, DemonKingStats, Phase } from "../types";
-import { INITIAL_STATE, ENDINGS } from "../constants";
+import { INITIAL_STATE, ENDINGS, DAY_EVENTS } from "../constants";
 
 export function useGameState() {
   const [state, setState] = useState<GameState>(INITIAL_STATE);
@@ -16,8 +16,8 @@ export function useGameState() {
 
     // Demon King stats no longer trigger game over per user request to only have 5 core stats.
 
-    // 100 Days Ending
-    if (currentState.currentDay >= 100) {
+    // 100 Days/Level Ending
+    if (currentState.hero.level >= 100) {
       const ending = ENDINGS.find(e => e.condition(currentState));
       setState(s => ({ ...s, phase: "ENDING", endingId: ending?.id }));
       return true;
@@ -108,24 +108,31 @@ export function useGameState() {
         return prev;
       }
 
+      if (prev.phase === "NIGHT") {
+        const lastEventId = prev.history[prev.history.length - 1];
+        const lastEvent = DAY_EVENTS.find(e => e.id === lastEventId);
+        const isImperialCity = lastEvent?.region === "imperial_city";
+        
+        const jump = isImperialCity ? 5 : 1;
+        const nextValue = prev.hero.level + jump;
+        
+        return { 
+          ...prev, 
+          currentDay: nextValue, 
+          phase: "DAY" as Phase,
+          hero: { ...prev.hero, level: nextValue }
+        };
+      }
+
       if (prev.phase === "PROLOGUE") {
         return { ...prev, phase: "DAY" };
       }
 
       if (prev.phase === "DAY") {
         return { ...prev, phase: "NIGHT" };
-      } else {
-        const nextDay = prev.currentDay + 1;
-        const nextLevel = prev.hero.level + 1; // +1 level per event/day
-        const newState = { 
-          ...prev, 
-          currentDay: nextDay, 
-          phase: "DAY" as Phase,
-          hero: { ...prev.hero, level: nextLevel }
-        };
-        // We don't need to call checkGameOver here usually, but doesn't hurt
-        return newState;
       }
+
+      return prev;
     });
   }, []);
 
@@ -133,9 +140,11 @@ export function useGameState() {
     setState(prev => ({ ...prev, phase: "PROLOGUE" }));
   };
 
-  const triggerEnding = useCallback(() => {
+  const triggerEnding = useCallback((endingId?: string) => {
     setState(prev => {
-      const ending = ENDINGS.find(e => e.condition(prev));
+      const ending = endingId 
+        ? ENDINGS.find(e => e.id === endingId) 
+        : ENDINGS.find(e => e.condition(prev));
       return { ...prev, phase: "ENDING", endingId: ending?.id };
     });
   }, []);

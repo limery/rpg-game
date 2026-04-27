@@ -51,7 +51,7 @@ export const NightPhase: React.FC<NightPhaseProps> = ({ stats, proposal, onDecis
     <div className="relative w-full h-full flex flex-col items-center justify-center bg-[#050000] overflow-hidden">
       {/* 16:9 Background Image Wrapped in Containment */}
       <div className="absolute inset-0 flex items-center justify-center p-0">
-         <div className="w-full h-full aspect-video bg-[url('/upload/demon%20city.jpg')] bg-contain bg-center bg-no-repeat opacity-50 shadow-[inset_0_0_50px_rgba(0,0,0,1)]" />
+         <div className="w-full h-full aspect-video bg-[url('/upload/demon_city.jpg')] bg-contain bg-center bg-no-repeat opacity-50 shadow-[inset_0_0_50px_rgba(0,0,0,1)]" />
       </div>
 
       {/* Background Atmosphere */}
@@ -97,7 +97,7 @@ export const NightPhase: React.FC<NightPhaseProps> = ({ stats, proposal, onDecis
               </div>
               
               <div className="flex-1 flex flex-col justify-center">
-                <h3 className="text-red-500 font-mono font-bold text-[8px] uppercase tracking-[0.2em] mb-1">Proposal</h3>
+                <h3 className="text-red-500 font-pixel font-bold text-[8px] uppercase tracking-[0.2em] mb-1">提案</h3>
                 <p className="text-white/90 text-sm leading-relaxed font-serif italic border-y border-white/5 py-3">
                   "{proposal.text}"
                 </p>
@@ -120,9 +120,9 @@ export const NightPhase: React.FC<NightPhaseProps> = ({ stats, proposal, onDecis
       </div>
 
       <div className="mt-8 flex items-center gap-6 text-white/20 font-mono text-[8px] uppercase tracking-[0.3em]">
-        <span className="flex items-center gap-2"><ChevronLeft size={12} /> Swipe Left to Reject</span>
+        <span className="flex items-center gap-2"><ChevronLeft size={12} /> 左滑拒绝</span>
         <div className="w-1 h-1 bg-white/10 rounded-full" />
-        <span className="flex items-center gap-2">Swipe Right to Accept <ChevronRight size={12} /></span>
+        <span className="flex items-center gap-2">右滑通过 <ChevronRight size={12} /></span>
       </div>
     </div>
   </div>

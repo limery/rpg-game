@@ -142,7 +142,7 @@ export const DayPhase: React.FC<DayPhaseProps> = ({ state, onEventComplete, onTr
               </div>
               <div className="flex gap-3 text-[10px] font-mono text-white/50 bg-black/40 px-2 py-0.5 border border-white/5">
                  <span className="flex items-center gap-1 text-white/70 font-bold uppercase tracking-widest">
-                   战斗力: {hero.health + hero.stamina + hero.mana}
+                   Power: {hero.health + hero.stamina + hero.mana}
                  </span>
               </div>
             </div>

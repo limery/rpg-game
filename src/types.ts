@@ -77,5 +77,6 @@ export interface Ending {
   id: string;
   title: string;
   text: string;
+  image?: string;
   condition: (state: GameState) => boolean;
 }

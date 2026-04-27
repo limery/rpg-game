@@ -8,9 +8,9 @@ import { useGameState } from "./hooks/useGameState";
 import { DayPhase } from "./components/DayPhase";
 import { NightPhase } from "./components/NightPhase";
 import { Prologue } from "./components/Prologue";
-import { NIGHT_PROPOSALS, ENDINGS } from "./constants";
+import { DAY_EVENTS, NIGHT_PROPOSALS, ENDINGS } from "./constants";
 import { PixelButton, PixelCard, PixelPortrait, cn } from "./components/UI";
-import { RefreshCcw, Trophy, Skull, X, Coins, Shield, Users, Wind, Play } from "lucide-react";
+import { RefreshCcw, Trophy, Skull, X, Coins, Shield, Users, Wind, Play, FlaskConical } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { EndingScreen } from "./components/EndingScreen";
@@ -66,14 +66,15 @@ export default function App() {
               <h1 className="text-red-500 font-pixel text-xl uppercase tracking-widest pixel-text-shadow">魔王退休计划</h1>
               <div className="h-6 w-px bg-red-900/50" />
               <div className="flex flex-col">
-                <span className="text-white/50 font-mono text-[7px] uppercase tracking-[0.2em]">Progress</span>
-                <span className="text-white font-mono text-xs font-bold">DAY {state.currentDay} / 100</span>
+                <span className="text-white/50 font-mono text-[7px] uppercase tracking-[0.2em]">进度</span>
+                <span className="text-white font-mono text-xs font-bold">第 {state.currentDay} 天 / 100</span>
               </div>
             </div>
             <div className="flex gap-4">
               <button 
                 onClick={() => setIsProfileOpen(true)}
                 className="flex items-center gap-3 px-3 py-1 bg-black/40 border border-white/10 hover:bg-white/5 transition-colors"
+                id="profile_btn"
               >
                 <div className="w-6 h-6 rounded-none overflow-hidden border border-red-500">
                    <img 
@@ -86,9 +87,10 @@ export default function App() {
                          target.src = target.src.replace(window.location.origin, '');
                        }
                      }}
+                     id="profile_img"
                    />
                 </div>
-                <span className="text-white/70 font-mono text-[10px] uppercase font-bold">Profile</span>
+                <span className="text-white/70 font-mono text-[10px] uppercase font-bold">详细状态</span>
               </button>
             </div>
           </div>
@@ -241,15 +243,15 @@ export default function App() {
                       <h4 className="text-white/50 font-mono text-[10px] uppercase tracking-[0.2em] mb-4">当前状态评估</h4>
                       <div className="grid grid-cols-2 gap-x-12 gap-y-6">
                         <div className="bg-black/40 p-3 border border-white/5">
-                          <span className="block text-white/30 text-[8px] uppercase mb-1">Affection / 好感度</span>
+                          <span className="block text-white/30 text-[8px] uppercase mb-1">好感度</span>
                           <span className="text-pink-500 font-mono text-xl font-bold">{state.hero.affection}</span>
                         </div>
                         <div className="bg-black/40 p-3 border border-white/5">
-                          <span className="block text-white/30 text-[8px] uppercase mb-1">Suspicion / 怀疑度</span>
+                          <span className="block text-white/30 text-[8px] uppercase mb-1">怀疑度</span>
                           <span className="text-orange-500 font-mono text-xl font-bold">{state.hero.suspicion}</span>
                         </div>
                         <div className="bg-black/40 p-3 border border-white/5">
-                          <span className="block text-white/30 text-[8px] uppercase mb-1">Combat Power / 战斗力</span>
+                          <span className="block text-white/30 text-[8px] uppercase mb-1">综合战斗力</span>
                           <span className="text-white font-mono text-xl font-bold">{state.hero.health + state.hero.stamina + state.hero.mana}</span>
                         </div>
                       </div>
